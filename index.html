@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learning BOM and DOM - Browser and Document Object Model</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #121212);
+      color: #eee;
+      line-height: 1.6;
+      margin: 0;
+      padding: 2.5rem 1.5rem 4rem;
+      min-height: 100vh;
+      user-select: text;
+    }
+    h1, h2, h3 {
+      color: #58a6ff;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(88, 166, 255, 0.7);
+    }
+    h1 {
+      font-size: 3rem;
+      margin-top: 0;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1.5rem;
+      color: #79c0ff;
+      text-shadow: 0 0 12px #79c0ff;
+    }
+    h2 {
+      border-bottom: 3px solid #2380f7;
+      padding-bottom: 0.4rem;
+      margin-top: 3rem;
+      font-size: 2rem;
+      color: #58a6ff;
+    }
+    h3 {
+      font-size: 1.4rem;
+      margin-top: 2rem;
+      color: #79c0ff;
+    }
+    p {
+      font-size: 1.15rem;
+      max-width: 820px;
+      margin-bottom: 1.2rem;
+      color: #ddd;
+      text-shadow: 0 0 2px rgba(0,0,0,0.8);
+    }
+    code {
+      background-color: #0d1117;
+      color: #56d364;
+      padding: 0.25em 0.5em;
+      border-radius: 6px;
+      font-family: 'Fira Code', monospace, monospace;
+      font-size: 0.97rem;
+      box-shadow: inset 0 0 6px #30404d;
+      transition: background-color 0.3s ease;
+      user-select: text;
+    }
+    code:hover {
+      background-color: #161b22;
+    }
+    pre {
+      background: #0d1117;
+      color: #cdd9e5;
+      padding: 1.3rem 1.5rem;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace, monospace;
+      font-size: 0.95rem;
+      max-width: 820px;
+      box-shadow:
+        0 0 8px rgb(88 166 255 / 0.4),
+        inset 0 0 5px rgb(255 255 255 / 0.12);
+      margin-bottom: 1.8rem;
+      user-select: text;
+      transition: box-shadow 0.3s ease;
+    }
+    pre:hover {
+      box-shadow:
+        0 0 12px rgb(88 166 255 / 0.7),
+        inset 0 0 8px rgb(255 255 255 / 0.2);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 820px;
+      margin: 1.5rem 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow:
+        0 4px 12px rgba(21, 32, 43, 0.7);
+      background-color: #161b22;
+      font-size: 1rem;
+      color: #c9d1d9;
+    }
+    th, td {
+      border-bottom: 1px solid #30363d;
+      padding: 1rem 1.6rem;
+      text-align: left;
+      vertical-align: middle;
+      user-select: text;
+    }
+    th {
+      background-color: #2380f7;
+      color: #f0f6fc;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      box-shadow: inset 0 -3px 8px #0265d1;
+    }
+    tbody tr:hover {
+      background-color: #1f2937;
+      transition: background-color 0.25s ease-in;
+      cursor: default;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #0f1419;
+    }
+    ul {
+      max-width: 820px;
+      margin-bottom: 1.5rem;
+      padding-left: 1.6rem;
+      color: #c9d1d9;
+    }
+    ul li {
+      margin-bottom: 0.65rem;
+      user-select: text;
+    }
+    .example-output {
+      background-color: #010409;
+      border-left: 6px solid #2380f7;
+      padding: 1rem 1.5rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #58a6ff;
+      max-width: 820px;
+      margin: 0.5rem 0 2rem 0;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      box-shadow: 0 6px 15px rgba(35, 128, 247, 0.55);
+      font-size: 1.05rem;
+      user-select: text;
+    }
+    button {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(45deg, #2380f7, #58a6ff);
+      border: none;
+      color: white;
+      padding: 0.65rem 1.5rem;
+      margin-right: 1.2rem;
+      margin-top: 1.2rem;
+      border-radius: 30px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 1.05rem;
+      cursor: pointer;
+      box-shadow:
+        0 6px 20px rgba(35, 128, 247, 0.65);
+      transition: all 0.3s ease;
+      user-select: none;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    button:hover, button:focus {
+      background: linear-gradient(45deg, #58a6ff, #2380f7);
+      box-shadow:
+        0 8px 28px rgba(88, 166, 255, 0.85);
+      outline: none;
+      transform: translateY(-2px);
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #8b949e;
+      margin: 4rem 0 1rem 0;
+      user-select: none;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 1.5rem 0.9rem 3rem;
+      }
+      h1 {
+        font-size: 2.4rem;
+      }
+      h2 {
+        font-size: 1.6rem;
+      }
+      pre {
+        font-size: 0.85rem;
+      }
+      button {
+        font-size: 0.95rem;
+        padding: 0.5rem 1.2rem;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <h1>Learning BOM and DOM</h1>
+  <section>
+    <h2>Introduction</h2>
+    <p>
+      The <strong>Browser Object Model (BOM)</strong> and the <strong>Document Object Model (DOM)</strong> are two important concepts in web development that allow interaction with the browser and the webpage's content.
+    </p>
+    <p>
+      The <em>BOM</em> provides objects and methods to interact with the browser window, such as managing dialogs, screen information, browser history, and URL.
+      The <em>DOM</em>, on the other hand, is a structured representation of the HTML or XML document that allows script languages like JavaScript to manipulate the content, structure, and style of a webpage.
+    </p>
+    <p>
+      Understanding both BOM and DOM is essential for effective client-side web development.
+    </p>
+  </section>
+
+  <section>
+    <h2>Key Points</h2>
+    <h3>Browser Object Model (BOM)</h3>
+    <ul>
+      <li>Allows interaction with the browser window and its components.</li>
+      <li>Includes objects such as <code>window</code>, <code>navigator</code>, <code>screen</code>, <code>history</code>, and <code>location</code>.</li>
+      <li>Not standardized by W3C, can vary slightly between browsers.</li>
+      <li>Used for controlling browser features like opening new windows or tabs, accessing browser info, and handling URL redirection.</li>
+    </ul>
+
+    <h3>Document Object Model (DOM)</h3>
+    <ul>
+      <li>Standardized interface for accessing and manipulating HTML and XML documents.</li>
+      <li>Represents the document as a tree of nodes, where each node is an object representing part of the document.</li>
+      <li>Allows dynamic changes of content, style, and structure via JavaScript.</li>
+      <li>Is consistent across modern browsers due to W3C standardization.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Differences between BOM and DOM</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>Browser Object Model (BOM)</th>
+          <th>Document Object Model (DOM)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Definition</td>
+          <td>Objects provided by browsers to interact with the browser environment/window.</td>
+          <td>Standardized representation of the HTML/XML document structure.</td>
+        </tr>
+        <tr>
+          <td>Purpose</td>
+          <td>Manage browser features like windows, history, URLs, and user agent info.</td>
+          <td>Manipulate content, structure, and style of the document.</td>
+        </tr>
+        <tr>
+          <td>Standardization</td>
+          <td>Not fully standardized; can differ between browsers.</td>
+          <td>Standardized by W3C and consistent across browsers.</td>
+        </tr>
+        <tr>
+          <td>Main Objects</td>
+          <td><code>window</code>, <code>navigator</code>, <code>screen</code>, <code>history</code>, <code>location</code></td>
+          <td><code>document</code> and its nodes (elements, text, attributes)</td>
+        </tr>
+        <tr>
+          <td>Manipulates</td>
+          <td>The browser window and environment.</td>
+          <td>The webpage content and structure.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Examples</h2>
+
+    <h3>BOM Example: Using <code>window.alert()</code> and <code>location.href</code></h3>
+    <pre><code> // Show an alert dialog to the user
+window.alert('Hello! This is an alert from the BOM.');
+
+ // Redirect browser to another URL
+console.log('Current URL:', window.location.href);
+ // window.location.href = 'https://www.example.com';</code></pre>
+
+    <h3>DOM Example: Manipulating Document Content</h3>
+    <pre><code>// Change the text content of an element
+const heading = document.getElementById('sample-heading');
+heading.textContent = 'This text was changed using the DOM!';
+
+// Create and add a new paragraph element
+const p = document.createElement('p');
+p.textContent = 'New paragraph added dynamically to the page.';
+document.body.appendChild(p);</code></pre>
+
+    <h3>Live DOM Example Below</h3>
+    <h4 id="sample-heading">Original Heading</h4>
+    <button id="changeTextBtn">Change Heading Text</button>
+    <button id="addParaBtn">Add Paragraph</button>
+    <div id="dynamic-content" style="margin-top:1rem;"></div>
+  </section>
+
+  <script>
+    // DOM example interactivity
+    document.getElementById('changeTextBtn').addEventListener('click', () => {
+      const heading = document.getElementById('sample-heading');
+      heading.textContent = 'Heading text changed dynamically!';
+    });
+
+    document.getElementById('addParaBtn').addEventListener('click', () => {
+      const p = document.createElement('p');
+      p.textContent = 'This paragraph was added dynamically using DOM methods.';
+      document.getElementById('dynamic-content').appendChild(p);
+    });
+  </script>
+
+  <footer>
+    &copy; 2024 Learning BOM &amp; DOM &mdash; Browser Object Model &amp; Document Object Model
+  </footer>
+</body>
+</html>
